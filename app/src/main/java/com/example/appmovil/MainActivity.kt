@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
             val password = passwordInput.text.toString()
             Log.i("Test credentials", "Username: $username and Password: $password")
 
-            val intent : Intent = Intent(this, Galeria::class.java)
+            val intent : Intent = Intent(this, MapaActivity::class.java)
             startActivity(intent)
 
         }

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/contenedorMapa"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        app:layout_constraintDimensionRatio="1000:1500"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/mapaGuia"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.5"
+            android:scaleType="fitXY"
+            android:src="@drawable/mapa_guia"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="-60dp" />
+
+        <ImageView
+            android:id="@+id/imgLima"
+            android:layout_width="75dp"
+            android:layout_height="98dp"
+
+            android:adjustViewBounds="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/mask_lima"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="H,139:169"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.349"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            app:layout_constraintVertical_bias="0.68"
+            app:layout_constraintWidth_percent="0.30" />
+
+        <ImageView
+            android:id="@+id/imgAncash"
+            android:layout_width="60dp"
+            android:layout_height="85dp"
+
+            android:adjustViewBounds="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/mask_ancash"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="H,107:145"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.247"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            app:layout_constraintVertical_bias="0.518"
+            app:layout_constraintWidth_percent="0.30" />
+
+        <ImageView
+            android:id="@+id/imgLa_libertad"
+            android:layout_width="92dp"
+            android:layout_height="58dp"
+
+            android:adjustViewBounds="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/mask_la_libertad"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="H,172:105"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.15"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            app:layout_constraintVertical_bias="0.436"
+            app:layout_constraintWidth_percent="0.30" />
+
+        <ImageView
+            android:id="@+id/imgCajamarca"
+            android:layout_width="57dp"
+            android:layout_height="89dp"
+
+            android:adjustViewBounds="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/mask_cajamarca"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="H,104:158"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.169"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            app:layout_constraintVertical_bias="0.318"
+            app:layout_constraintWidth_percent="0.30" />
+
+        <ImageView
+            android:id="@+id/imgLambayeque"
+            android:layout_width="40dp"
+            android:layout_height="45dp"
+
+            android:adjustViewBounds="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/mask_lambayeque"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="H,71:81"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.061"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            app:layout_constraintVertical_bias="0.347"
+            app:layout_constraintWidth_percent="0.30" />
+
+        <ImageView
+            android:id="@+id/imgPiura"
+            android:layout_width="55dp"
+            android:layout_height="61dp"
+
+            android:adjustViewBounds="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/mask_piura"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="H,102:115"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            app:layout_constraintVertical_bias="0.289"
+            app:layout_constraintWidth_percent="0.30" />
+
+        <ImageView
+            android:id="@+id/imgTumbes"
+            android:layout_width="26dp"
+            android:layout_height="29dp"
+
+            android:adjustViewBounds="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/mask_tumbes"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="H,102:115"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+
+            app:layout_constraintVertical_bias="0.224"
+            app:layout_constraintWidth_percent="0.30" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

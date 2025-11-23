@@ -45,6 +45,23 @@ class MapaActivity : AppCompatActivity() {
         configurarDepto(R.id.imgPiura, R.drawable.mask_piura)
         configurarDepto(R.id.imgLambayeque, R.drawable.mask_lambayeque)
         configurarDepto(R.id.imgTumbes, R.drawable.mask_tumbes)
+        configurarDepto(R.id.imgIca, R.drawable.mask_ica)
+        configurarDepto(R.id.imgArequipa, R.drawable.mask_arequipa)
+        configurarDepto(R.id.imgMoquegua, R.drawable.mask_moquegua)
+        configurarDepto(R.id.imgTacna, R.drawable.mask_tacna)
+        configurarDepto(R.id.imgAmazonas, R.drawable.mask_amazonas)
+        configurarDepto(R.id.imgSanMartin, R.drawable.mask_san_martin)
+        configurarDepto(R.id.imgHuanuco, R.drawable.mask_huanuco)
+        configurarDepto(R.id.imgPasco, R.drawable.mask_pasco)
+        configurarDepto(R.id.imgJunin, R.drawable.mask_junin)
+        configurarDepto(R.id.imgHuancavelica, R.drawable.mask_huancavelica)
+        configurarDepto(R.id.imgAyacucho, R.drawable.mask_ayacucho)
+        configurarDepto(R.id.imgApurimac, R.drawable.mask_apurimac)
+        configurarDepto(R.id.imgLoreto, R.drawable.mask_loreto)
+        configurarDepto(R.id.imgUcayali, R.drawable.mask_ucayali)
+        configurarDepto(R.id.imgMadre_de_Dios, R.drawable.mask_madre_de_dios)
+        configurarDepto(R.id.imgPuno, R.drawable.mask_puno)
+        configurarDepto(R.id.imgCuzco, R.drawable.mask_cuzco)
 
 
     }

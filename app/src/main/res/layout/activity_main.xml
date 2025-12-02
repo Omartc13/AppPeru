@@ -1,66 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/login_background"
-    android:gravity="center"
-    android:padding="16dp"
-    tools:context=".MainActivity">
+    android:background="@color/white"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical">
-        
-        <ImageView
-            android:layout_width="160dp"
-            android:layout_height="160dp"
-            android:src="@drawable/login_icon"
-        />
+        android:orientation="vertical"
+        android:padding="24dp">
 
+        <!-- Imagen Paisaje Rectangular Redondeado -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="40dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/mountain_landscape"
+                android:scaleType="centerCrop"
+            />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Email Input (Más grande) -->
         <EditText
+            android:id="@+id/username_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:hint="Username"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/rounded_rect_white"
+            android:elevation="8dp"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:padding="20dp"
             android:textColor="@color/black"
-            android:textColorHint="@color/black"
-            android:textSize="20sp"
-            android:background="@drawable/rounded_corner"
-            android:padding="12dp"
-            android:inputType="text"
-            android:id="@+id/username_input"/>
+            android:textColorHint="#757575"
+            android:textSize="20sp" />
 
+        <!-- Password Input (Más grande) -->
         <EditText
+            android:id="@+id/password_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/rounded_rect_white"
+            android:elevation="8dp"
             android:hint="Password"
-            android:textColor="@color/black"
-            android:textColorHint="@color/black"
-            android:textSize="20sp"
-            android:background="@drawable/rounded_corner"
-            android:padding="12dp"
             android:inputType="textPassword"
-            android:id="@+id/password_input"/>
+            android:padding="20dp"
+            android:textColor="@color/black"
+            android:textColorHint="#757575"
+            android:textSize="20sp" />
 
+        <!-- Login Button (Más grande) -->
         <Button
+            android:id="@+id/login_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login"
-            android:backgroundTint="@color/black"
-            android:textColor="@color/white"
+            android:backgroundTint="@color/yellow_orange_btn"
             android:padding="18dp"
-            android:layout_marginTop="32dp"
-            android:textSize="20sp"
-            android:id="@+id/login_button"/>
+            android:text="Login"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:cornerRadius="16dp" />
 
+        <!-- Olvidaste contraseña -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="¿Olvidaste la contraseña?"
+            android:textColor="#757575"
+            android:textSize="16sp" />
+
+        <!-- Footer Registro -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="32dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¿No tienes una cuenta? "
+                android:textColor="#757575"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/register_link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registrate"
+                android:textColor="@color/blue_link"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
     </LinearLayout>
 
-
-</RelativeLayout>
+</ScrollView>

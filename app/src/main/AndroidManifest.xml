@@ -13,8 +13,19 @@
         android:theme="@style/Theme.AppMovil"
         tools:targetApi="31">
         <activity
+            android:name=".RegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".MapaActivity"
             android:exported="false" />
+        <activity
+            android:name=".NotificationsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppMovil" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppMovil" />
         <activity
             android:name=".Galeria"
             android:exported="false"

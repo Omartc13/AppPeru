@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var usernameInput : EditText
     lateinit var passwordInput : EditText
     lateinit var login_button : Button
+    lateinit var register_link : android.widget.TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +24,12 @@ class MainActivity : AppCompatActivity() {
         usernameInput = findViewById(R.id.username_input)
         passwordInput = findViewById(R.id.password_input)
         login_button = findViewById(R.id.login_button)
+        register_link = findViewById(R.id.register_link)
+
+        register_link.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
+        }
 
         login_button.setOnClickListener{
             val username = usernameInput.text.toString()

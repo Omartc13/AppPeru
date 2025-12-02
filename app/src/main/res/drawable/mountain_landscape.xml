@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="400dp"
+    android:height="200dp"
+    android:viewportWidth="400"
+    android:viewportHeight="200">
+    <!-- Sky -->
+    <path
+        android:fillColor="#E1F5FE"
+        android:pathData="M0,0h400v200h-400z"/>
+    <!-- Sun -->
+    <path
+        android:fillColor="#FFF176"
+        android:pathData="M320,40a30,30 0 1,0 60,0a30,30 0 1,0 -60,0"/>
+    <!-- Mountains -->
+    <path
+        android:fillColor="#90A4AE"
+        android:pathData="M0,200 L100,50 L200,200 Z"/>
+    <path
+        android:fillColor="#78909C"
+        android:pathData="M150,200 L280,80 L410,200 Z"/>
+</vector>

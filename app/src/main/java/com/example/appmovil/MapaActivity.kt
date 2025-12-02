@@ -3,8 +3,10 @@ package com.example.appmovil
 
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -63,7 +65,17 @@ class MapaActivity : AppCompatActivity() {
         configurarDepto(R.id.imgPuno, R.drawable.mask_puno)
         configurarDepto(R.id.imgCuzco, R.drawable.mask_cuzco)
 
+        val btnPerfil = findViewById<LinearLayout>(R.id.btnPerfil)
+        btnPerfil.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
 
+        val btnNotificaciones = findViewById<LinearLayout>(R.id.btnNotificaciones)
+        btnNotificaciones.setOnClickListener {
+            val intent = Intent(this, NotificationsActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     // --- FUNCIÓN MÁGICA ---

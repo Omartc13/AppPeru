@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 val libraryVersion by extra("1.2.6")
 
@@ -68,4 +69,11 @@ dependencies {
     // Glide Transformations (para recortar la imagen con la forma del departamento)
     implementation("jp.wasabeef:glide-transformations:4.3.0")
 
+    // Room Database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
+    // Coil (Imagenes en Compose)
+    implementation(libs.coil.compose)
 }

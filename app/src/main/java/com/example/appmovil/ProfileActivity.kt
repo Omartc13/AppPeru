@@ -256,11 +256,21 @@ fun ProfileInfo(usuario: Usuario?, currentPhoto: Uri?, onEditPhoto: () -> Unit) 
 
         // Nombre del Usuario (desde BD)
         Text(
-            text = usuario?.nombre ?: "Cargando...",
+            text = usuario?.nombre ?: usuario?.username ?: "Cargando...",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
+
+        // Email del usuario
+        if (usuario != null) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = usuario.email,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+        }
 
         Spacer(modifier = Modifier.height(4.dp))
 

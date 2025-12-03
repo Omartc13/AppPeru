@@ -44,6 +44,15 @@ import com.example.appmovil.data.Usuario
 import com.example.appmovil.utils.SessionManager
 import kotlinx.coroutines.launch
 
+import android.content.ContentValues
+import android.os.Environment
+import android.provider.MediaStore
+import androidx.compose.foundation.lazy.items
+import java.io.File
+import java.io.FileInputStream
+import com.example.appmovil.data.Publicacion
+import com.example.appmovil.data.Foto
+
 class ProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +70,46 @@ class ProfileActivity : ComponentActivity() {
     }
 }
 
+data class PostWithDetails(
+    val publicacion: Publicacion,
+    val fotoUrl: String?,
+    val likeCount: Int,
+    val deptName: String
+)
+
+private fun downloadMap(context: android.content.Context, userId: Int) {
+    val filename = "map_snapshot_$userId.png"
+    val file = File(context.filesDir, filename)
+    if (!file.exists()) {
+        Toast.makeText(context, "Primero visita tu mapa para generarlo", Toast.LENGTH_SHORT).show()
+        return
+    }
+
+    val contentValues = ContentValues().apply {
+        put(MediaStore.Images.Media.DISPLAY_NAME, "MiMapaPeru_$userId.png")
+        put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+        put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/AppPeru")
+    }
+
+    val resolver = context.contentResolver
+    val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+    if (uri != null) {
+        try {
+            resolver.openOutputStream(uri).use { out ->
+                FileInputStream(file).use { inp ->
+                    inp.copyTo(out!!)
+                }
+            }
+            Toast.makeText(context, "Mapa guardado en Galería", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(context, "Error al guardar: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    } else {
+        Toast.makeText(context, "Error al crear archivo", Toast.LENGTH_SHORT).show()
+    }
+}
+
 @Composable
 fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
     val context = LocalContext.current
@@ -70,6 +119,7 @@ fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
     // Estado del usuario
     var usuario by remember { mutableStateOf<Usuario?>(null) }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
+    var userPosts by remember { mutableStateOf<List<PostWithDetails>>(emptyList()) }
     
     // Stats
     var followersCount by remember { mutableStateOf(0) }
@@ -89,6 +139,17 @@ fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
             followersCount = db.appDao().countFollowers(userId)
             followingCount = db.appDao().countFollowing(userId)
             likesCount = db.appDao().countLikesForUser(userId)
+
+            // Cargar Posts
+            val posts = db.appDao().getPublicacionesByUser(userId)
+            val detailedPosts = posts.map { post ->
+                val photos = db.appDao().getFotosByPublicacion(post.id_publicacion)
+                val firstPhoto = photos.firstOrNull()
+                val pLikes = db.appDao().countLikesForPublicacion(post.id_publicacion)
+                val dept = db.appDao().getDepartamentoById(post.fk_departamento)
+                PostWithDetails(post, firstPhoto?.fotoUrl, pLikes, dept?.nombre ?: "Desconocido")
+            }
+            userPosts = detailedPosts
         }
     }
 
@@ -132,6 +193,19 @@ fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
                 currentPhoto = photoUri,
                 onEditPhoto = { imagePickerLauncher.launch("image/*") }
             )
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            Button(
+                onClick = { 
+                    val userId = SessionManager.getUserId(context)
+                    if (userId != -1) downloadMap(context, userId)
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D3E50))
+            ) {
+                Text("Descargar Mapa", color = Color.White)
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -140,7 +214,7 @@ fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
             Spacer(modifier = Modifier.height(24.dp))
             SectionTabs()
             Spacer(modifier = Modifier.height(16.dp))
-            PhotoGrid()
+            PhotoGrid(userPosts)
         }
     }
 }
@@ -343,12 +417,83 @@ fun SectionTabs() {
 }
 
 @Composable
-fun PhotoGrid() {
-    Box(
-        modifier = Modifier.fillMaxSize().padding(20.dp),
-        contentAlignment = Alignment.Center
+fun PhotoGrid(posts: List<PostWithDetails>) {
+    if (posts.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(text = "No tienes fotos aún.", color = Color.Gray)
+        }
+    } else {
+        androidx.compose.foundation.lazy.LazyColumn(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(posts) { item ->
+                PostItemCard(item)
+            }
+        }
+    }
+}
+
+@Composable
+fun PostItemCard(item: PostWithDetails) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Text(text = "Tus fotos están en el mapa.", color = Color.Gray)
+        Column {
+            if (item.fotoUrl != null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(Uri.parse(item.fotoUrl))
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = item.publicacion.titulo,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                )
+            }
+            
+            Column(modifier = Modifier.padding(12.dp)) {
+                Text(
+                    text = item.deptName,
+                    fontSize = 12.sp,
+                    color = Color(0xFFFF5722),
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                val comentario = item.publicacion.reseña
+                if (!comentario.isNullOrBlank()) {
+                    Text(
+                        text = comentario,
+                        fontSize = 14.sp,
+                        color = Color.Black
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_favorite_filled),
+                        contentDescription = "Likes",
+                        tint = Color.Red,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = "${item.likeCount} Likes",
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                }
+            }
+        }
     }
 }
 

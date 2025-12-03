@@ -34,6 +34,9 @@ interface AppDao {
     @Query("SELECT * FROM departamento WHERE nombre = :nombre")
     suspend fun getDepartamentoByName(nombre: String): Departamento?
 
+    @Query("SELECT * FROM departamento WHERE id_departamento = :id")
+    suspend fun getDepartamentoById(id: Int): Departamento?
+
     @Query("SELECT * FROM departamento")
     suspend fun getAllDepartamentos(): List<Departamento>
 

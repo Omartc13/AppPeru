@@ -77,39 +77,6 @@ data class PostWithDetails(
     val deptName: String
 )
 
-private fun downloadMap(context: android.content.Context, userId: Int) {
-    val filename = "map_snapshot_$userId.png"
-    val file = File(context.filesDir, filename)
-    if (!file.exists()) {
-        Toast.makeText(context, "Primero visita tu mapa para generarlo", Toast.LENGTH_SHORT).show()
-        return
-    }
-
-    val contentValues = ContentValues().apply {
-        put(MediaStore.Images.Media.DISPLAY_NAME, "MiMapaPeru_$userId.png")
-        put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-        put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/AppPeru")
-    }
-
-    val resolver = context.contentResolver
-    val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-
-    if (uri != null) {
-        try {
-            resolver.openOutputStream(uri).use { out ->
-                FileInputStream(file).use { inp ->
-                    inp.copyTo(out!!)
-                }
-            }
-            Toast.makeText(context, "Mapa guardado en Galería", Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            Toast.makeText(context, "Error al guardar: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
-    } else {
-        Toast.makeText(context, "Error al crear archivo", Toast.LENGTH_SHORT).show()
-    }
-}
-
 @Composable
 fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
     val context = LocalContext.current
@@ -121,10 +88,43 @@ fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
     var photoUri by remember { mutableStateOf<Uri?>(null) }
     var userPosts by remember { mutableStateOf<List<PostWithDetails>>(emptyList()) }
     
+    // Estado de descarga
+    var isDownloading by remember { mutableStateOf(false) }
+    
     // Stats
     var followersCount by remember { mutableStateOf(0) }
     var followingCount by remember { mutableStateOf(0) }
     var likesCount by remember { mutableStateOf(0) }
+
+    // Launcher para guardar archivo
+    val saveMapLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("image/png")
+    ) { uri ->
+        uri?.let { destinationUri ->
+            val userId = SessionManager.getUserId(context)
+            val sourceFile = File(context.filesDir, "map_snapshot_$userId.png")
+            
+            if (sourceFile.exists()) {
+                isDownloading = true
+                scope.launch {
+                    try {
+                        context.contentResolver.openOutputStream(destinationUri)?.use { out ->
+                            FileInputStream(sourceFile).use { inp ->
+                                inp.copyTo(out)
+                            }
+                        }
+                        Toast.makeText(context, "Mapa guardado exitosamente", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(context, "Error al guardar: ${e.message}", Toast.LENGTH_SHORT).show()
+                    } finally {
+                        isDownloading = false
+                    }
+                }
+            } else {
+                Toast.makeText(context, "Primero visita tu mapa para generarlo", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     
     // Cargar datos al inicio
     LaunchedEffect(Unit) {
@@ -196,15 +196,35 @@ fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
             
             Spacer(modifier = Modifier.height(12.dp))
             
-            Button(
-                onClick = { 
-                    val userId = SessionManager.getUserId(context)
-                    if (userId != -1) downloadMap(context, userId)
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D3E50))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Descargar Mapa", color = Color.White)
+                Button(
+                    onClick = { 
+                        val userId = SessionManager.getUserId(context)
+                        if (userId != -1) {
+                             // Verificar primero si existe la imagen
+                             val sourceFile = File(context.filesDir, "map_snapshot_$userId.png")
+                             if (sourceFile.exists()) {
+                                 saveMapLauncher.launch("MiMapaPeru_$userId.png")
+                             } else {
+                                 Toast.makeText(context, "Primero visita tu mapa para generarlo", Toast.LENGTH_SHORT).show()
+                             }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2D3E50))
+                ) {
+                    Text("Descargar Mapa", color = Color.White)
+                }
+                
+                if (isDownloading) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LinearProgressIndicator(
+                        modifier = Modifier.width(150.dp),
+                        color = Color(0xFFFF5722)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))

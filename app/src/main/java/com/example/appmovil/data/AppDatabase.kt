@@ -7,8 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [Usuario::class, Departamento::class, Publicacion::class, Foto::class],
-    version = 1,
+    entities = [Usuario::class, Departamento::class, Publicacion::class, Foto::class, MapaLike::class, Notificacion::class, UsuarioFollow::class, PublicacionLike::class],
+    version = 5,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

@@ -58,6 +58,10 @@ data class Departamento(
             childColumns = ["fk_departamento"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["fk_usuario"]),
+        Index(value = ["fk_departamento"])
     ]
 )
 data class Publicacion(
@@ -79,7 +83,8 @@ data class Publicacion(
             childColumns = ["fk_publicacion"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index(value = ["fk_publicacion"])]
 )
 data class Foto(
     @PrimaryKey(autoGenerate = true) val id_foto: Int = 0,
@@ -87,4 +92,76 @@ data class Foto(
     @ColumnInfo(name = "foto_url") val fotoUrl: String,
     val orden: Int?,
     @ColumnInfo(name = "principal_mapa") val principalMapa: Boolean = false
+)
+
+@Entity(
+    tableName = "mapa_like",
+    primaryKeys = ["fk_user_from", "fk_user_to"],
+    foreignKeys = [
+        ForeignKey(entity = Usuario::class, parentColumns = ["id_usuario"], childColumns = ["fk_user_from"], onDelete = ForeignKey.CASCADE),
+        ForeignKey(entity = Usuario::class, parentColumns = ["id_usuario"], childColumns = ["fk_user_to"], onDelete = ForeignKey.CASCADE)
+    ],
+    indices = [
+        Index(value = ["fk_user_from"]),
+        Index(value = ["fk_user_to"])
+    ]
+)
+data class MapaLike(
+    val fk_user_from: Int,
+    val fk_user_to: Int,
+    val fecha: Date = Date()
+)
+
+@Entity(
+    tableName = "notificacion",
+    foreignKeys = [
+        ForeignKey(entity = Usuario::class, parentColumns = ["id_usuario"], childColumns = ["fk_usuario_destino"], onDelete = ForeignKey.CASCADE),
+        ForeignKey(entity = Usuario::class, parentColumns = ["id_usuario"], childColumns = ["fk_usuario_origen"], onDelete = ForeignKey.CASCADE)
+    ],
+    indices = [Index(value = ["fk_usuario_destino"]), Index(value = ["fk_usuario_origen"])]
+)
+data class Notificacion(
+    @PrimaryKey(autoGenerate = true) val id_notificacion: Int = 0,
+    val fk_usuario_destino: Int,
+    val fk_usuario_origen: Int? = null, // Quién hizo la acción (para ir a su perfil)
+    val tipo: String, // "LIKE", "COMENTARIO", "FOLLOW", etc.
+    val mensaje: String,
+    val fecha: Date = Date(),
+    val leido: Boolean = false
+)
+
+@Entity(
+    tableName = "publicacion_like",
+    primaryKeys = ["fk_usuario", "fk_publicacion"],
+    foreignKeys = [
+        ForeignKey(entity = Usuario::class, parentColumns = ["id_usuario"], childColumns = ["fk_usuario"], onDelete = ForeignKey.CASCADE),
+        ForeignKey(entity = Publicacion::class, parentColumns = ["id_publicacion"], childColumns = ["fk_publicacion"], onDelete = ForeignKey.CASCADE)
+    ],
+    indices = [
+        Index(value = ["fk_usuario"]),
+        Index(value = ["fk_publicacion"])
+    ]
+)
+data class PublicacionLike(
+    val fk_usuario: Int,
+    val fk_publicacion: Int,
+    val fecha: Date = Date()
+)
+
+@Entity(
+    tableName = "usuario_follow",
+    primaryKeys = ["fk_follower", "fk_followed"],
+    foreignKeys = [
+        ForeignKey(entity = Usuario::class, parentColumns = ["id_usuario"], childColumns = ["fk_follower"], onDelete = ForeignKey.CASCADE),
+        ForeignKey(entity = Usuario::class, parentColumns = ["id_usuario"], childColumns = ["fk_followed"], onDelete = ForeignKey.CASCADE)
+    ],
+    indices = [
+        Index(value = ["fk_follower"]),
+        Index(value = ["fk_followed"])
+    ]
+)
+data class UsuarioFollow(
+    val fk_follower: Int,
+    val fk_followed: Int,
+    val fecha: Date = Date()
 )

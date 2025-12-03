@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Place
@@ -72,6 +71,11 @@ fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
     var usuario by remember { mutableStateOf<Usuario?>(null) }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
     
+    // Stats
+    var followersCount by remember { mutableStateOf(0) }
+    var followingCount by remember { mutableStateOf(0) }
+    var likesCount by remember { mutableStateOf(0) }
+    
     // Cargar datos al inicio
     LaunchedEffect(Unit) {
         val userId = SessionManager.getUserId(context)
@@ -80,6 +84,11 @@ fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
             usuario?.fotoPerfilUrl?.let { 
                 photoUri = Uri.parse(it)
             }
+            
+            // Cargar estadísticas reales
+            followersCount = db.appDao().countFollowers(userId)
+            followingCount = db.appDao().countFollowing(userId)
+            likesCount = db.appDao().countLikesForUser(userId)
         }
     }
 
@@ -89,19 +98,15 @@ fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
     ) { uri: Uri? ->
         uri?.let {
             photoUri = it
-            // Guardar en Base de Datos
             val userId = SessionManager.getUserId(context)
             if (userId != -1) {
                 scope.launch {
-                    // Persistir permiso de lectura para el URI (importante para reinicios)
                     try {
                         context.contentResolver.takePersistableUriPermission(
                             it,
                             Intent.FLAG_GRANT_READ_URI_PERMISSION
                         )
-                    } catch (e: Exception) {
-                        // En algunos dispositivos o fuentes esto puede fallar, pero intentamos
-                    }
+                    } catch (e: Exception) { }
                     
                     db.appDao().updateFotoPerfil(userId, it.toString())
                     Toast.makeText(context, "Foto actualizada", Toast.LENGTH_SHORT).show()
@@ -119,12 +124,9 @@ fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
                 .background(Color.White)
                 .padding(paddingValues)
         ) {
-            // Top Bar con Menu Hamborguesa funcional
             TopBar(onBackClick, onLogout)
-
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Profile Info (Con nombre real y foto real)
             ProfileInfo(
                 usuario = usuario, 
                 currentPhoto = photoUri,
@@ -133,17 +135,11 @@ fun ProfileScreen(onBackClick: () -> Unit, onLogout: () -> Unit) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Stats (Todos en 0 como pedido)
-            StatsRow()
+            StatsRow(followersCount, followingCount, likesCount)
 
             Spacer(modifier = Modifier.height(24.dp))
-
-            // Tabs
             SectionTabs()
-
             Spacer(modifier = Modifier.height(16.dp))
-
-            // Grid
             PhotoGrid()
         }
     }
@@ -174,7 +170,6 @@ fun TopBar(onBackClick: () -> Unit, onLogout: () -> Unit) {
             color = Color.Black
         )
         
-        // Menu Hamburguesa
         Box {
             IconButton(onClick = { showMenu = !showMenu }) {
                 Icon(
@@ -231,11 +226,10 @@ fun ProfileInfo(usuario: Usuario?, currentPhoto: Uri?, onEditPhoto: () -> Unit) 
                         .size(100.dp)
                         .clip(CircleShape)
                         .background(Color.LightGray)
-                        .padding(20.dp) // Padding si es el icono default
+                        .padding(20.dp)
                 )
             }
             
-            // Botón de editar (cámara)
             Box(
                 modifier = Modifier
                     .size(32.dp)
@@ -254,7 +248,6 @@ fun ProfileInfo(usuario: Usuario?, currentPhoto: Uri?, onEditPhoto: () -> Unit) 
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Nombre del Usuario (desde BD)
         Text(
             text = usuario?.nombre ?: usuario?.username ?: "Cargando...",
             fontSize = 22.sp,
@@ -262,7 +255,6 @@ fun ProfileInfo(usuario: Usuario?, currentPhoto: Uri?, onEditPhoto: () -> Unit) 
             color = Color.Black
         )
 
-        // Email del usuario
         if (usuario != null) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -282,7 +274,6 @@ fun ProfileInfo(usuario: Usuario?, currentPhoto: Uri?, onEditPhoto: () -> Unit) 
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
-            // Ubicación hardcoded por ahora (o podrías pedirla al registrar)
             Text(
                 text = "Perú",
                 fontSize = 14.sp,
@@ -293,16 +284,17 @@ fun ProfileInfo(usuario: Usuario?, currentPhoto: Uri?, onEditPhoto: () -> Unit) 
 }
 
 @Composable
-fun StatsRow() {
+fun StatsRow(followers: Int, following: Int, likes: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 32.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        StatItem(count = "0", label = "Seguidores")
-        StatItem(count = "0", label = "Siguiendo")
-        StatItem(count = "0", label = "Viajes")
+        StatItem(count = followers.toString(), label = "Seguidores")
+        StatItem(count = following.toString(), label = "Siguiendo")
+        // Reemplazamos "Viajes" con "Likes" o mostramos Viajes si prefieres, pero likes es social
+        StatItem(count = likes.toString(), label = "Likes") 
     }
 }
 
@@ -347,20 +339,16 @@ fun SectionTabs() {
                     .background(Color(0xFFFF5722), RoundedCornerShape(2.dp))
             )
         }
-        // Puedes agregar más tabs aquí si quieres
     }
 }
 
 @Composable
 fun PhotoGrid() {
-    // Aquí se deberían mostrar las fotos del usuario desde la BD
-    // Por ahora dejamos el placeholder o vacío si prefieres
-    
     Box(
         modifier = Modifier.fillMaxSize().padding(20.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Aún no has subido fotos.", color = Color.Gray)
+        Text(text = "Tus fotos están en el mapa.", color = Color.Gray)
     }
 }
 
@@ -371,11 +359,10 @@ fun BottomNavigationBar() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFF2D3E50)) // Dark Navy
+            .background(Color(0xFF2D3E50))
             .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        // Inicio -> MapaActivity
         Box(modifier = Modifier.clickable { 
             val intent = Intent(context, MapaActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -384,14 +371,13 @@ fun BottomNavigationBar() {
             BottomNavItem(icon = Icons.Default.Home, label = "Inicio", selected = false)
         }
 
-        // Explorar -> Placeholder
         Box(modifier = Modifier.clickable { 
-            Toast.makeText(context, "Función Explorar próximamente", Toast.LENGTH_SHORT).show()
+             val intent = Intent(context, ExplorarActivity::class.java)
+             context.startActivity(intent)
         }) {
              BottomNavItem(icon = Icons.Default.Search, label = "Explorar", selected = false)
         }
 
-        // Notific. -> NotificationsActivity
         Box(modifier = Modifier.clickable { 
              val intent = Intent(context, NotificationsActivity::class.java)
              context.startActivity(intent)
@@ -399,14 +385,13 @@ fun BottomNavigationBar() {
              BottomNavItem(icon = Icons.Default.Notifications, label = "Notific.", selected = false)
         }
 
-        // Perfil -> Stay here (Selected)
         BottomNavItem(icon = Icons.Default.Person, label = "Perfil", selected = true)
     }
 }
 
 @Composable
 fun BottomNavItem(icon: ImageVector, label: String, selected: Boolean) {
-    val tintColor = if (selected) Color(0xFFFFC107) else Color.White // Yellow/Orange for selected
+    val tintColor = if (selected) Color(0xFFFFC107) else Color.White
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(

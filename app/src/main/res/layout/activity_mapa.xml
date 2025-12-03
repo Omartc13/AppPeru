@@ -25,14 +25,33 @@
             android:orientation="vertical"
             android:layout_weight="1">
 
-            <TextView
-                android:id="@+id/txtHello"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hola, Usuario!"
-                android:textColor="@color/black"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                
+                <TextView
+                    android:id="@+id/txtHello"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hola, Usuario!"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btnFollow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="12dp"
+                    android:text="Seguir"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    android:backgroundTint="@color/blue_link"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -536,6 +555,7 @@
 
         <!-- Inicio -->
         <LinearLayout
+            android:id="@+id/btnInicio"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -557,6 +577,7 @@
 
         <!-- Explorar -->
         <LinearLayout
+            android:id="@+id/btnExplorar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -621,5 +642,37 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <!-- Like Count Badge -->
+    <TextView
+        android:id="@+id/txtLikeCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_rect_white"
+        android:backgroundTint="#E91E63"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:elevation="10dp"
+        app:layout_constraintBottom_toTopOf="@id/fab_like"
+        app:layout_constraintEnd_toEndOf="@id/fab_like"
+        app:layout_constraintStart_toStartOf="@id/fab_like"
+        android:layout_marginBottom="-10dp"
+        android:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_like"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:src="@drawable/ic_favorite_border"
+        android:visibility="visible"
+        app:backgroundTint="@color/white"
+        app:tint="#E91E63"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,6 +31,10 @@
             android:exported="false"
             android:theme="@style/Theme.AppMovil" />
         <activity
+            android:name=".ExplorarActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppMovil" />
+        <activity
             android:name=".Galeria"
             android:exported="false"
             android:label="@string/title_activity_galeria"

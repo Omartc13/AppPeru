@@ -38,6 +38,7 @@ import com.example.appmovil.data.AppDatabase
 import com.example.appmovil.data.Usuario
 import com.example.appmovil.utils.SessionManager
 import kotlinx.coroutines.launch
+import java.io.File
 
 class ExplorarActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,17 +112,33 @@ fun UserMapItem(user: Usuario, onClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(8.dp)
         ) {
-            // Simulated Map Preview (Generic Image for now)
-            Image(
-                painter = painterResource(id = R.drawable.mapa_guia), // Reuse the map image
-                contentDescription = "User Map",
-                contentScale = ContentScale.Fit, // Fit entire map
-                modifier = Modifier
-                    .height(120.dp)
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.LightGray)
-            )
+            // Map Preview
+            if (user.fotoMapaCaptura != null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(File(user.fotoMapaCaptura))
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "User Map",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .height(120.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.LightGray)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.mapa_guia), // Reuse the map image
+                    contentDescription = "User Map",
+                    contentScale = ContentScale.Fit, // Fit entire map
+                    modifier = Modifier
+                        .height(120.dp)
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color.LightGray)
+                )
+            }
             
             Spacer(modifier = Modifier.height(8.dp))
 

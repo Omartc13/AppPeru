@@ -24,6 +24,9 @@ interface AppDao {
     @Query("UPDATE usuario SET foto_perfil_url = :url WHERE id_usuario = :id")
     suspend fun updateFotoPerfil(id: Int, url: String)
 
+    @Query("UPDATE usuario SET foto_mapa_captura = :path WHERE id_usuario = :id")
+    suspend fun updateMapSnapshot(id: Int, path: String)
+
     // --- DEPARTAMENTO ---
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertDepartamento(departamento: Departamento)

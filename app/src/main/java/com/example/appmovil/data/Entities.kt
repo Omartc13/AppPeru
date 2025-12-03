@@ -29,6 +29,7 @@ data class Usuario(
     @ColumnInfo(name = "password_hash") val passwordHash: String,
     val nombre: String?,
     @ColumnInfo(name = "foto_perfil_url") val fotoPerfilUrl: String?,
+    @ColumnInfo(name = "foto_mapa_captura") val fotoMapaCaptura: String? = null,
     @ColumnInfo(name = "fecha_registro") val fechaRegistro: Date?,
     val privado: Boolean = false
 )

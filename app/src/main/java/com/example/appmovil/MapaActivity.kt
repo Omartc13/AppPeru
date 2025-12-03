@@ -2,10 +2,13 @@ package com.example.appmovil
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -30,8 +33,10 @@ import com.example.appmovil.utils.SessionManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import jp.wasabeef.glide.transformations.MaskTransformation
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 import java.util.Date
-import android.widget.Button
+
 
 // Helper para almacenar la configuración de cada departamento
 data class DeptConfig(val idView: Int, val idMask: Int, val nombre: String)
@@ -103,6 +108,55 @@ class MapaActivity : AppCompatActivity() {
         }
 
         setupUI()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        
+        val intentTarget = intent.getIntExtra("TARGET_USER_ID", -1)
+        if (intentTarget != -1 && intentTarget != currentUserId) {
+            targetUserId = intentTarget
+            isMyMap = false
+        } else {
+            targetUserId = currentUserId
+            isMyMap = true
+        }
+        
+        setupUI() // Reset UI state (buttons, listeners)
+        loadUserData()
+        loadMapImages()
+        bindBottomNavigation()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isMyMap) {
+            captureAndSaveMapSnapshot()
+        }
+    }
+
+    private fun captureAndSaveMapSnapshot() {
+        try {
+            val container = findViewById<View>(R.id.contenedorMapa)
+            if (container.width > 0 && container.height > 0) {
+                val bitmap = Bitmap.createBitmap(container.width, container.height, Bitmap.Config.ARGB_8888)
+                val canvas = Canvas(bitmap)
+                container.draw(canvas)
+
+                val file = File(filesDir, "map_snapshot_${currentUserId}.png")
+                val stream = FileOutputStream(file)
+                bitmap.compress(Bitmap.CompressFormat.PNG, 80, stream)
+                stream.close()
+
+                lifecycleScope.launch {
+                    val db = AppDatabase.getDatabase(this@MapaActivity)
+                    db.appDao().updateMapSnapshot(currentUserId, file.absolutePath)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
     
     private fun setupUI() {
